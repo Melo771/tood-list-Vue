@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>vue简易留言板</title>
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <script src="lib/jquery-1.7.2.js"></script>
+    <script src="lib/bootstrap.js"></script>
+
+    <script src="lib/vue.js"></script>
+</head>
+<body>
+    <div style="margin-top: 30px" class="container" id="box">
+
+        <h3 style="margin-bottom: 30px" class="text-center text-warning">bootstrap + vue 实现简易留言板</h3>
+
+        <form role="form">
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input v-model="username" type="text" id="username" class="form-control" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="age">年龄:</label>
+                <input v-model="age" type="text" id="age" class="form-control" placeholder="请输入年龄">
+            </div>
+            <div class="form-group">
+                <input @click="add" type="button" value="添加" class="btn btn-primary">
+                <input type="reset" value="重置" class="btn btn-danger">
+            </div>
+        </form>
+        <hr>
+        <table class="table table-bordered table-hover">
+            <caption style="margin-bottom: 20px" class="h3 text-info">用户信息表</caption>
+            <tr class="text-danger">
+                <th class="text-center">序号</th>
+                <th class="text-center">名字</th>
+                <th class="text-center">年龄</th>
+                <th class="text-center">操作</th>
+            </tr>
+            <tr class="text-center" v-for="item in myData">
+                <td>{{$index+1}}</td>
+                <td>{{item.username}}</td>
+                <td>{{item.age}}</td>
+                <td> <button @click="nowIndex=$index,confirmDeletion(num)" data-toggle="modal" data-target="#layer" class="btn btn-primary btn-sm">删除</button> </td>
+            </tr>
+            <tr>
+                <td v-show="myData.length ! == 0" colspan="4" class="text-right">
+                    <button @click="nowIndex=-2,confirmDeletion(!num)" data-toggle="modal" data-target="#layer" class="btn btn-danger btn-sm">全部删除</button>
+                </td>
+            </tr>
+            <tr v-show="myData.length == 0">
+                <td colspan="4" class="text-center text-muted">
+                    <p>暂无数据....</p>
+                </td>
+            </tr>
+        </table>
+
+        <!--模态框-->
+        <div data-index="{{nowIndex}}" role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button data-dismiss="modal" type="button" class="close">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title">{{confirmTxt}}</h4>
+                    </div>
+                    <div class="modal-body text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+                        <button @click="removeMsg(nowIndex)" data-dismiss="modal" class="btn btn-primary btn-sm">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#box",
+            data: {
+                myData: [
+                    {username: "张三" , age: 18},
+                    {username: "李四" , age: 20}
+                ],
+                username: "",
+                age: '',
+                nowIndex: null,
+                num: false,
+                confirmTxt: " "
+            },
+            methods: {
+                add: function () {
+                    if(this.username !== "" && this.age !== "") {
+                        this.myData.push({
+                            username: this.username,
+                            age: this.age
+                        });
+                    } else{
+                        alert('请输入内容');
+                    }
+                    this.username = "";
+                    this.age = "";
+                },
+                removeMsg: function (n) {
+                    if(n == -2){
+                        this.myData = [];
+                    }else {
+                        this.myData.splice(n,1);
+                    }
+                },
+                confirmDeletion: function (j) {
+                    if(j) {
+                        this.confirmTxt = " 确认删除全部内容吗?"
+                    } else {
+                        this.confirmTxt = " 确认删除这条信息吗?"
+                    }
+                }
+            }
+            
+        });
+    </script>
+</body>
+</html>
